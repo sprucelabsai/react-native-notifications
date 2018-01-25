@@ -136,10 +136,22 @@ public class PushNotification implements IPushNotification {
     }
 
     protected Notification.Builder getNotificationBuilder(PendingIntent intent) {
+        int smallIcon = 0;
+
+        // For new versions, get a silhouette icon
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            smallIcon = mContext.getResources().getIdentifier("ic_stat_name", "drawable", mContext.getPackageName());
+        }
+
+        // If no icon is found, use the app icon
+        if (smallIcon == 0) {
+            smallIcon = mContext.getApplicationInfo().icon;
+        }
+
         return new Notification.Builder(mContext)
                 .setContentTitle(mNotificationProps.getTitle())
                 .setContentText(mNotificationProps.getBody())
-                .setSmallIcon(mContext.getApplicationInfo().icon)
+                .setSmallIcon(smallIcon)
                 .setContentIntent(intent)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setAutoCancel(true);
